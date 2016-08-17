@@ -1,0 +1,30 @@
+<tool id="calc_vaf_db_strand" name="Calculate VAF (Error Suppressed)" version="1.0.0">
+    <description>Calculates an error-suppressed variant allele fraction (VAF)</description>
+
+    <command>
+        python \$SCRIPT_PATH/some_script.py    
+            --input $input
+            --output-maf $output
+    </command>
+
+    <inputs>
+        <param name="input" type="data" format="vcf" label="Input VCF File" />
+    </inputs>
+
+    <outputs>
+        <data name="output" format="maf" label="output_maf_file" />
+    </outputs>
+
+    <stdio>
+        <exit_code range="1:" level="fatal" description="Failure" />
+    </stdio>
+
+    <requirements>
+        <requirement type="package" version="76">calc_vaf_db_strand.py</requirement>
+        <requirement type="package" version="1.4">python</requirement>
+    </requirements>
+
+    <help>
+
+    </help>
+</tool>

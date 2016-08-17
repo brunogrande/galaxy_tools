@@ -1,0 +1,16 @@
+<tool id="mutation_portrait" name="Mutation Portrait" force_history_refresh="True">
+    <description> for VCF files.</description>
+    <command interpreter="python">./museqportrait/src/museqportraitbuilder.py --out-dir . $input</command>
+    <inputs>
+        <param format="vcf" name="input" type="data" label="Input VCF file"/>
+    </inputs>
+    <outputs>
+        <data format="vcf" metadata_source="input" name="output" label="${input.name}.liftedToHg19.${input.ext}" />
+    </outputs>
+    <requirements>
+        <requirement type="binary">liftOver</requirement>
+    </requirements>
+    <help>
+        Run LiftOver on either VCF or MAF files.
+    </help>
+</tool>

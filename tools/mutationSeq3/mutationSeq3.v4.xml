@@ -1,0 +1,77 @@
+<tool id="mutationSeq3" name="mutationSeq">
+
+    <description>xml points to python wrapper, callmutationSeq3.py, to run classify.py in mutationSeq 3.0.0 on inputs</description>
+
+    <command interpreter="python">
+    	#if $Interval.interval_select=="interval"
+    		callmutationSeq3.py -n $normalBam -t $tumourBam --normalBamIndex ${normalBam.metadata.bam_index} --tumourBamIndex ${tumourBam.metadata.bam_index} -r $ref --interval $Interval.interval -o $output
+
+	#elif $Threshold.threshold_select=="threshold"
+		callmutationSeq3.py -n $normalBam -t $tumourBam --normalBamIndex ${normalBam.metadata.bam_index} --tumourBamIndex ${tumourBam.metadata.bam_index} -r $ref --threshold $Threshold.threshold -o $output
+	#elif $Interval.interval_select=="interval" and $Threshold.threshold_select=="threshold"
+		callmutationSeq3.py -n $normalBam -t $tumourBam --normalBamIndex ${normalBam.metadata.bam_index} --tumourBamIndex ${tumourBam.metadata.bam_index} -r $ref --interval $Interval.interval --threshold $Threshold.threshold -o $output
+	#else
+		callmutationSeq3.py -n $normalBam -t $tumourBam --normalBamIndex ${normalBam.metadata.bam_index} --tumourBamIndex ${tumourBam.metadata.bam_index} -r $ref -o $output
+	#end if
+			
+    </command>
+
+    <inputs> 
+		<param format="bam" name="normalBam" type="data" label="Normal BAM file"/>
+		<param format="bam" name="tumourBam" type="data" label="Tumour BAM file"/> 
+		<param format="fasta" name="ref" type="data" label="Reference Fasta File"/>
+		
+		<conditional name="Interval">
+		    
+			<param name="interval_select" type="select" label="Select Interval">
+		        <option value="intval">Interval</option>
+				<option value="whole">Whole File</option>
+		    </param>
+		    
+			<when value="intval">
+		        <param name="interval" label="Interval" type="text" area="True" size="5x25" help=""/>
+		    </when>
+		</conditional>
+		
+		<conditional name="Threshold">
+		    <param name="threshold_select" type="select" label="Specify threshold">
+		        <option value="thr">Custom Threshold</option>
+				<option value="Whole">Default</option>
+		    </param>
+		    <when value="thr">
+		        <param name="threshold" type="float" label="Threshold" value="0.5"/>
+		    </when>
+		</conditional>
+
+		
+    </inputs>
+
+
+
+    <outputs>
+        <data format="vcf" name="output" label="Output VCF File" />      
+    </outputs>
+    
+    <stdio>
+    	<exit_code range="0" level="warning" description="Ignore the Warning, exit code 0, run was a success"/>
+    </stdio>
+    	
+
+	
+
+
+	
+<help>
+
+.. class:: infomark
+
+IMPORTANT INFORMATION
+
+---
+
+Help information about HMMCopy
+
+</help>
+
+</tool>
+

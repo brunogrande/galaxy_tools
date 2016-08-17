@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<tool_dependency>
+    <package name="ensembl_vep" version="76">
+        <repository name="package_ensembl_vep_76" owner="bgrande" prior_installation_required="True" />
+    </package>
+</tool_dependency>

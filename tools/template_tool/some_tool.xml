@@ -1,0 +1,30 @@
+<tool id="vcf2maf" name="vcf2maf" version="1.0.0">
+    <description>Converts VCF files into MAF format</description>
+
+    <command>
+        python \$SCRIPT_PATH/some_script.py    
+            --input $input
+            --output-maf $output
+    </command>
+
+    <inputs>
+        <param name="input" type="data" format="vcf" label="Input VCF File" />
+    </inputs>
+
+    <outputs>
+        <data name="output" format="maf" label="output_maf_file" />
+    </outputs>
+
+    <stdio>
+        <exit_code range="1:" level="fatal" description="Failure" />
+    </stdio>
+
+    <requirements>
+        <requirement type="package" version="76">ensembl_vep</requirement>
+        <requirement type="package" version="1.4">vcf2maf</requirement>
+    </requirements>
+
+    <help>
+
+    </help>
+</tool>

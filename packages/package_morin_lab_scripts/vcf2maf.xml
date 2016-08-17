@@ -1,0 +1,37 @@
+<tool id="vcf2maf" name="vcf2maf" version="1.0.0">
+    <description>Converts VCF files into MAF format</description>
+
+    <command>
+        ln -s $input_vcf ./input.vcf;
+        perl \$VCF2MAF_SCRIPT_PATH/vcf2maf.pl    
+            --input-vcf ./input.vcf
+            --output-maf $output_maf
+            --tumor-id $tumour_id
+            --normal-id $normal_id
+            --vep-path \$ENSEMBL_VEP_76_INSTALL_DIR
+            --vep-data \$ENSEMBL_VEP_76_CACHE_DIR
+    </command>
+
+    <inputs>
+        <param name="tumour_id" type="text" label="Tumour ID (Name)" value="Tumour" />
+        <param name="normal_id" type="text" label="Normal ID (Name)" value="Normal" />
+        <param name="input_vcf" type="data" format="vcf" label="Input VCF File" />
+    </inputs>
+
+    <outputs>
+        <data name="output_maf" format="maf" label="#echo os.path.splitext( str( $input_vcf.name ) )[ 0 ] #_${tool.name}" />
+    </outputs>
+
+    <stdio>
+        <exit_code range="1:" level="fatal" description="Failure" />
+    </stdio>
+
+    <requirements>
+        <requirement type="package" version="76">ensembl_vep</requirement>
+        <requirement type="package" version="1.4">vcf2maf</requirement>
+    </requirements>
+
+    <help>
+
+    </help>
+</tool>

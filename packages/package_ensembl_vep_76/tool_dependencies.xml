@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<tool_dependency>
+    <package name="ensembl_vep" version="76">
+        <install version="1.0">
+            <actions>
+                <action type="download_by_url">http://github.com/Ensembl/ensembl-tools/tarball/release/76.tar.gz</action>
+                <action type="shell_command">perl scripts/variant_effect_predictor/INSTALL.pl --DESTDIR ./scripts/variant_effect_predictor/ --AUTO a</action>
+                <action type="move_directory_files">
+                    <source_directory>scripts/variant_effect_predictor</source_directory>
+                    <destination_directory>$INSTALL_DIR</destination_directory>
+                </action>
+                <action type="set_environment">
+                    <environment_variable name="ENSEMBL_VEP_76_INSTALL_DIR" action="set_to">$INSTALL_DIR</environment_variable>
+                    <environment_variable name="PERL5LIB" action="prepend_to">$INSTALL_DIR/Bio</environment_variable>
+                </action>
+            </actions>
+        </install>
+        <readme>
+This package installs the Ensembl Variant Effect Predictor (VEP) and its dependencies. 
+
+At the moment, this package assumes that the appropriate Perl 5 environment is properly set up prior to installation. Notably, this includes the following modules:
+- LWP::Simple
+- Archive::Zip
+- DBD::mysql
+
+Also, the cache is downloaded seperately and its location is stored in the ENSEMBL_VEP_76_CACHE_DIR environment variable. 
+        </readme>
+    </package>
+</tool_dependency>
+

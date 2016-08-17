@@ -1,0 +1,17 @@
+<tool id="runLiftOver" name="UCSC liftOver">
+    <description> on either VCF or MAF files.</description>
+    <command interpreter="perl">runLiftOver.pl $input $output $isMaf</command>
+    <inputs>
+        <param format="vcf,maf" name="input" type="data" label="Input VCF/MAF file"/>
+        <param name="isMaf" type="boolean" label="Is the input a MAF file?" truevalue="1" falsevalue="0" />
+    </inputs>
+    <outputs>
+        <data format="vcf" metadata_source="input" name="output" label="${input.name}.liftedToHg19.${input.ext}" />
+    </outputs>
+    <requirements>
+        <requirement type="binary">liftOver</requirement>
+    </requirements>
+    <help>
+        Run LiftOver on either VCF or MAF files.
+    </help>
+</tool>

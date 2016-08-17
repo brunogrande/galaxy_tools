@@ -1,0 +1,37 @@
+<tool id="proteinPlot" name="ProteinPlot" version="1.0.0">
+  <description>Visualize Mutations Across a Protein</description>
+  <command interpreter="python">
+    mutationPlot.py
+      --ensembl_gene=$ensembl_gene
+      --maf_file=$maf_file
+      --tick_spacing=$tick_spacing
+    -o=$out_file
+  </command>
+  <inputs>
+
+      <param name="ensembl_gene" type="text" label="Enter Ensembl gene identifier"/>
+
+        <param name="maf_file" type="data" label="Input mutations (MAF format)" />
+
+    <param name="tick_spacing" type="integer" value="100" label="Tick spacing" />
+  </inputs>
+  <outputs>
+    <data format="pdf" name="out_file" />
+
+
+  </outputs>
+  <help>
+
+**What it does**
+
+
+**Parameter list**
+
+
+
+**Output**
+
+  </help>
+</tool>
+
+

@@ -1,0 +1,169 @@
+<tool id="YAHA" name="YAHA" version="0.1.82">
+	<description> Long read alignment</description>
+	<command>
+		#if $INDEXPLS.indexavail =="Yes"
+			/home/marija/software/src/yaha -x $INDEXFILE -q $INDEXPLS.QUERYFILE $INDEXPLS.outformat stdout -G $INDEXPLS.G -M $INDEXPLS.M -P $INDEXPLS.P
+			#if $INDEXPLS.ADVANCEOPT.moreopts =="Yup"
+				-t $INDEXPLS.ADVANCEOPT.t $INDEXPLS.ADVANCEOPT.v -BW $INDEXPLS.ADVANCEOPT.BW -MD $INDEXPLS.ADVANCEOPT.MD -X $INDEXPLS.ADVANCEOPT.X  
+				#if INDEXPLS.ADVANCEOPT.AGSED.ags == "NOAGS"
+					-AGS N
+				#else
+					-AGS Y -GEC $INDEXPLS.ADVANCEOPT.AGSED.GEC -GOC $INDEXPLS.ADVANCEOPT.AGSED.GOC -RC $INDEXPLS.ADVANCEOPT.AGSED.RC -MS $INDEXPLS.ADVANCEOPT.AGSED.MS
+				#end if
+				#if $INDEXPLS.ADVANCEOPT.OQCED.oqc == "NOOQC"
+					-OQC N
+				#else
+					-OQC Y -BP $INDEXPLS.ADVANCEOPT.OQCED.BP -MGDP $INDEXPLS.ADVANCEOPT.OQCED.MGDP -MNO $INDEXPLS.ADVANCEOPT.OQCED.MNO 
+					#if $INDEXPLS.ADVANCEOPT.OQCED.FBSED.fbs == "FBS"
+						-FBS Y -PRL $INDEXPLS.ADVANCEOPT.OQCED.FBSED.PRL -PSS $INDEXPLS.ADVANCEOPT.OQCED.FBSED.PSS
+					#else
+						-FBS N
+					#end if
+				#end if
+			#end if
+		#else
+			 cp $INDEXPLS.GENOMEFILE genomefile.fa; /home/marija/software/src/yaha -g genomefile.fa
+			#if $INDEXPLS.INDEXADVANCED.moreindexoptions == "yes"
+				-H $INDEXPLS.INDEXADVANCED.MaximumHits -L $INDEXPLS.INDEXADVANCED.SeedLength -S $INDEXPLS.INDEXADVANCED.SkipDistance
+			#end if
+		#end if
+	</command>
+	<inputs>
+		<conditional name="INDEXPLS">
+			<!-- conditional INDEXPLS checks if there is an indexed reference available. (aka if you can select anything above) only YAHA indexed files are allowed-->
+			<param name="indexavail" type="select" label="Do you have a YAHA indexed genome file?" >
+				<option value="Yes">Yes</option>
+				<option value="No">No</option>
+			</param>
+			<when value="No">
+				<!-- When the user selects "No" as the option/value for the indexavail parameter the user needs to indedex a reference using YAHA  -->
+				<param name="GENOMEFILE" type="data" format="fasta,.nib2" label="Genome File for Indexing" help="Yaha requires a Yaha Indexed Reference Genome to run so use this section to index a file and then come back to the Yaha tool when its done! :)" />
+				<!-- the key is -g -->
+				<conditional name="INDEXADVANCED">
+					<!-- INDEXADVANCED takes care of if they want defult settings or if they want the "advanced" settings for creating the YAHA index. -->
+					<param name="moreindexoptions" type="select" label="Show more indexing options" optional="true" help="The defult settings are the most sensitive.">
+						<option value="yes">Advanced (non-defult) options</option>
+						<option value="No" selected="true">Defult options</option>
+					</param>
+					<when value="yes">
+						<!-- Shows advanced index creation options if the user checkes the 'Advanced' checkbox  -->
+						<param name="MaximumHits" type="integer" min="0" max="65525" value="65525" label="Maximum Hits Allowed" optional="true" help="Maximum value: 65525. K-mers that appear more than the specified number of times will be randomly sampled down during index creation."/>
+						<!-- the key is -H -->
+						<param name="seedLength" type="integer" min="0" max="15" value="15" optional="true" label="Seed Length" help="Maximum value: 15. Seed length is the length of k-mer seeds in the index." />
+						<!-- the key is -L -->
+						<param name="skipDistance" type="integer" min="0" max="15" value="1" label="Skip Distance" optional="true" help="Maximum Value: Seed Length (from above). Skip distance is the distance to skip ahead on reference before forming the next k-mer to index." />
+						<!-- the key is -S -->
+					</when>
+					<when value="No"/>
+				</conditional>
+			</when>
+			<when value="Yes">
+				<!-- When the user selects Yes for the indexavail parameter running yaha is possible so the options show up. yay! -->
+				<param name="INDEXFILE" type="data" format="yaha_index" label="Yaha Indexed Genome file"/>
+				<!-- The key for the YAHA indexed file is -x -->
+				<param name="QUERYFILE" type="data" label="Query file" help="The file containing sequence data to be alligned. Either FASTA or FASQ format" format="fasta,fasq" />
+				<!-- The key for the query file is -q -->
+				<param name="outformat" type="select" label="Output format">
+					<option value="-osh">SAM format with hard clipping</option>
+					<option value="-oss">SAM format with soft clipping</option>
+					<!--Blast 8 format not supported by galaxy but this would be the other option 
+						<option value="-o8">BLAST8 format</option> -->
+				</param>
+				<!-- The key for this parameter will be the value of this param and the value will be stdout so [$outformat stdout] will go in <command>  -->
+
+				<param name="G" type="integer" value="50" label="Maximum Gap (indel size) Allowed Within an Allignment" help="Maximum size of an insertion/deletion. Gaps (indels) larger than this will result in split allignment. The defult is 50" />
+				<!-- The key for this parameter is -G -->
+
+				<param name="M" type="integer" value="25" label="Minimum Matches" help="The minimum total number of bases in seed maches needed to initiate an alignment. The defult is 25"/>
+				<!-- The key for this parameter is -M -->
+
+				<param name="P" type="float" value="0.9" min="0" max="1" label="Minimum Identity Percent" help="Minimum matches/alignment-length ratio. Alignments below this threshold are not output. The defult is 0.9 and you can input a number that is between 0 and 1" />
+				<!-- The key for this parameter is -P -->
+
+
+				<conditional name="ADVANCEOPT">
+					<param name="moreopts" label="Show advanced options?" type="select" optional="true" help="Show more input and output parameter options.">
+						<option value="Yup"> Yes</option>
+						<option value="Nop" selected="true">No</option>				
+					</param>
+					<when value="Nop" />
+					<when value="Yup">
+						<param name="t" type="integer" value="1" label="Number of Threads to Use" help="Defult is 1" />
+						<!-- The key for this parameter is -t -->
+						<param name="v" type="boolean" label="Output more verbose info to stderr" checked="false" truevalue="-v" falsevalue=""/>
+						<!-- The key for this parameter is -v -->
+						<param name="BW" type="integer" value="5" label="Band Width" help="Width on either side of diaganol banded Smith-Waterman calculations during alignment. Only used between seed hits and for extensions. Between seeds: band = gap between seeds + 2*Band Width. During extensions: band = 1 + 4*BandWidth. Defult is 5" />
+						<!-- The key for this parameter is -BW -->
+						<param name="MD" type="integer" value="50" label="Maximum strech without seed matches" help="Along a potential alignment if there is a longer strech than this without seed matches the alignment will be broken into two. Defult is 50" />
+						<!-- The key for this parameter is -MD -->
+						<param name="X" type="integer" value="25" label="X-drop off" help="X-drop off is at least how much lower the score for an alignment extension must be than the best extension before the search for a longer extension will stop" />
+						<!-- The key for this parameter is -X -->
+						<conditional name="AGSED">
+							<param name="ags" type="select" label="Cost/Scoring" help="Affine Gap Scoring is the defult. Simple Edit Distance uses a Levenschtein score calculation and so other cost/score parameters are ignored.">
+								<option value="AGS" selected="true">Affine Gap Scoring</option>
+								<option value="NOAGS">Simple Edit Distance</option>
+							</param>
+							<when value="NOAGS" />
+							<!-- When user chooses Simple Edit Distance none of the cost/score parameters are shown -->
+							<when value="AGS">
+							<!-- When user chooses AGS following parameters are shown. -->
+								<param name="GEC" type="integer" label="Indel Extension Cost" value="2" help="The cost of opening a new Insertion or deletion. Specified as a positive integer and the defult is 2"/>
+								<!-- The key for this parameter is -GEC -->
+								<param name="GOC" type="integer" value="5" label="Indel Opening Cost" help="The cost for each base in an indel. Specified as a positive integer and the defult is 5" />
+								<!-- The key for this parameter is -GOC -->
+								<param name="RC" type="integer" value="3" label="Replacement Cost" help="The cost of a mis-matched base. Specified as a positive integer and the defult is 3" />
+								<!-- They key for this parameter is -RC -->
+								<param name="MS" type="integer" value="1" label="Match Score" help="The positive scoer added for each matching base. The defult is 1" />
+							</when>
+						</conditional>
+						<conditional name="OQCED">
+							<param name="oqc" type="select" label="Optimal Query Coverage?" help="Optimal Query Coverage is the defult and allows the aligner to search for the best collection of alignments that cover the length of each query (Optimal Coverage Set/ OCS). If turned off all alignments meeting other threshold parameters will be Output">
+								<option value="OQC" selected="true">Turned On</option>
+								<option value="NOOQC">Turned Off</option>
+							</param>
+							<when value="NOOQC"/>
+							<!-- When user chooses Turned Off none of the optimal query coverage parameters are shown -->
+							<when value="OQC">
+							<!-- When user chooses Turned On the following parameters are shown  -->
+								<param name="BP" type="integer" value="5" label="Breakpoint Penalty" help="First of two factors that determine total penalty for including an additional alignment in the OCS. Defult is 5." />
+								<!-- The key for this parameter is -BP  -->
+								<param name="MGDP" type="integer" min="1" max="9" value="5" label="Maximum Genomic Distance Penalty " help="Second of two factors that determine total penalty for inculding an aditional alignment in the OCS. Controls the Maximum genomic distance penalty that can be assessed on a log10 scale (so a value of 5 indicates that the genomic distance penalty will be maxed out at 100K base pairs. The defult is 5" />
+								<!-- The key for this parameter is -MGDP -->
+								<param name="MNO" type="integer" value="" label="Minimum Non Overlap" help="Two adjoining alignments must each cover at least this amount of non-overlapping region in the query to be included in the OCS. The defult is set to 25 but the defult should be the same as the Minimum Matches value so for the defult check the value in Minimum Matches" />
+								<!-- The Key for this parameter is -MNO -->
+								<conditional name="FBSED">
+									<param name="fbs" type="select" label="Filter by similarity?" help="When turned on alignments similar to the OCS are also included in the output. The two parameters which show up if you pick Turned On control how the selection of `similar` alignments is made and an alignment must satisfy BOTH thresholds to be `similar`. The defult is Turned off">
+										<option value="FBS">Turned On</option>
+										<option value="NOFBS" selected="true">Turned Off</option>
+									</param>
+									<when value="NOFBS"/>
+									<when value="FBS">
+										<param name="PRL" type="float" min="0" max="1" value="0.9" label="Percent Reciprocal Length" help="The overlapping region of two alignments must cover at least this percentage (value inputed above) of the length of BOTH of the alignments to be considered similar. Accepts values from 0 to 1 with the defult value being 0.9" />
+										<!-- The key for this parameter is -PRL -->
+										<param name="PSS" type="float" min="0" max="1" value="0.9" label="Percent Similar Score" help="An alignment will be considered similar to another ONLY if the score of the secondary alignment is more than this percentage (value inputed above) of the primary alignment score. Accepts values from 0 to 1 with the defult being 0.9 " />
+										<!-- The key for this parameter is -PSS -->
+									</when>
+								</conditional>
+							</when>
+						</conditional>
+					</when>
+				</conditional>
+			</when>
+		</conditional>
+	</inputs>
+	<outputs>
+		<data format="sam" name="Yaha on ${input.QUERYFILE}">
+			<filter>INDEXPLS['indexavail'] ==  "Yes" </filter>
+		</data>
+		<data format="nib2" name="${input.GENOMEFILE}.nib2" >
+			<filter>INDEXPLS['indexavail'] == "No" </filter>
+		</data>
+		<data format="yaha_index" name="${input.GENOMEFILE}.X${INDEXPLS.INDEXADVANCED.SeedLength}_${INDEXPLS.INDEXADVANCED.SkipDistance}_${INDEXPLS.INDEXADVANCED.MaximumHits}S">
+			<filter>INDEXPLS['indexavail'] == "No" </filter>
+		</data>
+	</outputs>
+	<stdio>
+        <exit_code range="0" level="warning" description="Normal" />
+        <exit_code range="1" level="fatal" description="Error in one of the subprocesses" />
+    </stdio>
+</tool>

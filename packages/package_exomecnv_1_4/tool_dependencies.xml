@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<tool_dependency>
+    <package name="R" version="3.0.3">
+        <repository name="package_r_3_0_3" owner="iuc" prior_installation_required="True" />
+    </package>
+    <package name="exomecnv" version="1.4">
+        <install version="1.0">
+            <actions>
+                <action type="setup_r_environment">
+                    <repository name="package_r_3_0_3" owner="iuc">
+                        <package name="R" version="3.0.3" />
+                    </repository>
+                    <package>http://www.bioconductor.org/packages/release/bioc/src/contrib/DNAcopy_1.40.0.tar.gz</package>
+                    <package>http://cran.r-project.org/src/contrib/Archive/ExomeCNV/ExomeCNV_1.4.tar.gz</package>
+                    <package>http://cran.r-project.org/src/contrib/getopt_1.20.0.tar.gz</package>
+                </action>
+            </actions>
+        </install>
+        <readme>
+            This installer downloads and installs ExomeCNV and its dependencies.
+        </readme>
+    </package>
+</tool_dependency>

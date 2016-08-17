@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<tool_dependency>
+    <package name="perl" version="5.18.1">
+        <repository name="package_perl_5_18" owner="iuc" prior_installation_required="True" />
+    </package>
+    <package name="ensembl_vep_perl_env" version="1">
+        <install version="1.0">
+            <actions>
+                <action type="setup_perl_environment">
+                    <repository name="package_perl_5_18" owner="iuc">
+                        <package name="perl" version="5.18.1" />
+                    </repository>
+                    <package>LWP::Simple</package>
+                    <package>Archive::Zip</package>
+                    <package>DBD::mysql</package>
+                </action>
+            </actions>
+        </install>
+        <readme>
+This package sets up the Perl environment necessary for installing and running the Ensembl Variant Effect Predictor (VEP).
+        </readme>
+    </package>
+</tool_dependency>
+

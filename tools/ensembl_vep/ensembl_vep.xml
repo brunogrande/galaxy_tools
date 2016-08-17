@@ -1,0 +1,41 @@
+<tool id="ensembl_vep" name="Ensembl VEP" version="1.0.0">
+    <command>
+        perl \$ENSEMBL_VEP_76_INSTALL_DIR/variant_effect_predictor.pl
+            --fork 4
+            --offline 
+            --dir \$ENSEMBL_VEP_76_CACHE_DIR 
+            --no_stats 
+            --force_overwrite 
+            --everything 
+            --check_existing 
+            --total_length 
+            --allele_number 
+            --no_escape 
+            --gencode_basic 
+            --xref_refseq 
+            --assembly GRCh37 
+            --vcf 
+            --input_file $input_vcf 
+            --output_file $output_vcf
+    </command>
+
+    <inputs>
+        <param name="input_vcf" type="data" format="vcf" label="Input VCF File" />
+    </inputs>
+
+    <outputs>
+        <data format="vcf" name="output_vcf" label="${input.name}_vep-annotated" />
+    </outputs>
+
+    <stdio>
+        <exit_code range="1:" level="fatal" description="Failure" />
+    </stdio>
+
+    <requirements>
+        <requirement type="package" version="76">ensembl_vep</requirement>
+    </requirements>
+
+    <help>
+
+    </help>
+</tool>

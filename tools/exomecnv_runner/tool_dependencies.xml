@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<tool_dependency>
+    <package name="exomecnv" version="1.4">
+        <repository name="package_exome_1_4" owner="bgrande" prior_installation_required="True" />
+    </package>
+</tool_dependency>

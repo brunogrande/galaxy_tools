@@ -1,0 +1,28 @@
+<tool id="titancna" name="TitanCNA">
+    <description> calls copy number alterations and loss of heterozygosity for tumour-normal BAM pairs.</description>
+    <command interpreter="python">
+    	runTitanCNA.py
+    		--tumour_bam $tumour_bam
+    		--normal_bam $normal_bam
+    		--output $output
+    </command>
+    <inputs>
+        <param name="tumour_bam" format="bam" type="data" label="Tumour BAM file" />
+        <param name="normal_bam" format="bam" type="data" label="Normal BAM file" />
+    </inputs>
+    <outputs>
+        <data format="png" name="output" label="titan_output_file" />
+    </outputs>
+    <requirements>
+        <requirement type="package">samtools</requirement>
+        <requirement type="package">bcftools</requirement>
+        <requirement type="package">TitanRunner.py</requirement>
+    </requirements>
+    <stdio>
+        <exit_code range="0" level="warning" description="Normal" />
+        <exit_code range="1" level="fatal" description="Error in one of the subprocesses" />
+    </stdio>
+    <help>
+        Run TITAN on tumour-normal sample pairs.
+    </help>
+</tool>
